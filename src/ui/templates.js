@@ -8,7 +8,7 @@ export const detailsTemplate = (details: MessageDetails) => {
   const formattedDate = details.date.format('h:mm A M/D/YY');
   return `
     <li>
-      <button class="email-item" type="button">
+      <button data-message-id="${details.id}" class="email-item" type="button">
         <div class="sender-details">
           <p>${details.sender}</p>
           <span>${formattedDate}</span>

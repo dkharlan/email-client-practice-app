@@ -17,6 +17,7 @@ export const messageToDetails = (email: Message) => {
   }
 
   return {
+    id:      email.id,
     sender:  unescape(fromHeader.value),
     date:    moment(parseInt(email.internalDate)),
     subject: subjectHeader.value,
