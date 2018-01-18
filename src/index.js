@@ -2,19 +2,21 @@
  * @flow
  */
 
+import moment from 'moment';
+
 import type { Message, MessageKey } from './store/types';
 import store from './store/index';
 
-type EmailDetails = {
-  sender: string,
-  timestamp: string, // TODO for now
+type MessageDetails = {
+  sender:  string,
+  date:    moment,
   subject: string,
   snippet: string
 }
 
 type MessageEntry = {[id: MessageKey]: Message};
 
-function emailToDetails(email: Message) {
+function messageToDetails(email: Message) {
   const headers = email.payload.headers;
 
   const fromHeader = headers.find((h) => h.name === 'From');
@@ -27,21 +29,24 @@ function emailToDetails(email: Message) {
     throw 'Email has no "Subject" header';
   }
 
+  const date = moment(parseInt(email.internalDate));
+
   return {
-    sender: fromHeader.value,
-    timestamp: email.internalDate,
+    sender:  fromHeader.value,
+    date:    date,
     subject: subjectHeader.value,
     snippet: email.snippet
   }
 }
 
-function emailDetailsTemplate(details: EmailDetails) {
+function detailsTemplate(details: MessageDetails) {
+  const formattedDate = details.date.format('h:mm A M/D/YY');
   return `
     <li>
       <button class="email-item" type="button">
         <div class="sender-details">
           <p>${details.sender}</p>
-          <span>${details.timestamp}</span>
+          <span>${formattedDate}</span>
         </div>
         <p class="email-subject">${details.subject}</p>
         <p>${details.snippet}</p>
@@ -50,25 +55,17 @@ function emailDetailsTemplate(details: EmailDetails) {
   `;
 }
 
-// TODO needs types. better yet, replace with 'compose' from some lib
-const emailToTemplate = (e) => emailDetailsTemplate(emailToDetails(e));
-
-// TODO needs some types, see if this can be replaced by something from a lib
-function byTime(a, b) {
-  if(a > b) {
-    return -1;
-  }
-  else if (a < b) {
-    return 1;
-  }
-  else {
-    return 0;
-  }
+// from https://github.com/moment/moment/issues/3163
+function byTimeDescending(a: MessageDetails, b: MessageDetails) {
+  const theFuture = moment('10000-01-01');
+  const dateA = a.date || theFuture;
+  const dateB = b.date || theFuture;
+  return dateB.diff(dateA);
 }
 
 function sidebarTemplate(emailEntries: MessageEntry) {
-  const emails = Object.values(emailEntries).sort(byTime);
-  const emailsTemplateFragment = emails.reduce((accum, e) => accum + '\n' + emailToTemplate(e), '');
+  const emails = Object.values(emailEntries).map(messageToDetails).sort(byTimeDescending);
+  const emailsTemplateFragment = emails.reduce((accum, e) => accum + '\n' + detailsTemplate(e), '');
   return `
       <h2 class="email-header">Inbox</h2>
       <ul class="email-list">
