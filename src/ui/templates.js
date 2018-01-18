@@ -1,5 +1,5 @@
 import moment from 'moment'; // TODO see below
-import { MessageDetails, MessageEntry } from './types';
+import type { MessageDetails, MessageEntry } from './types';
 import { messageToDetails } from './transform';
 import { byTimeDescending } from '../utility/misc';
 
