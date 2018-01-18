@@ -21,6 +21,7 @@ function unescape(s: string) {
   return JSON.parse('"' + s.replace('"', '\\"') + '"');
 }
 
+// TODO stop mixing validation and data munging
 function messageToDetails(email: Message) {
   const headers = email.payload.headers;
 
@@ -66,6 +67,7 @@ function byTimeDescending(a: MessageDetails, b: MessageDetails) {
   return dateB.diff(dateA);
 }
 
+// TODO maybe seeing this here? https://github.com/facebook/flow/issues/2221
 function sidebarTemplate(emailEntries: MessageEntry) {
   const emails = Object.values(emailEntries).map(messageToDetails).sort(byTimeDescending);
   const emailsTemplateFragment = emails.reduce((accum, e) => accum + '\n' + detailsTemplate(e), '');
@@ -84,6 +86,6 @@ function render(selector, template) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function (event) {
+document.addEventListener('DOMContentLoaded', function(_) {
   render('.email-list-container', sidebarTemplate(store.messages));
 });
