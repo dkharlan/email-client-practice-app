@@ -16,6 +16,11 @@ type MessageDetails = {
 
 type MessageEntry = {[id: MessageKey]: Message};
 
+// from https://stackoverflow.com/questions/7885096/how-do-i-decode-a-string-with-escaped-unicode
+function unescape(s: string) {
+  return JSON.parse('"' + s.replace('"', '\\"') + '"');
+}
+
 function messageToDetails(email: Message) {
   const headers = email.payload.headers;
 
@@ -29,11 +34,9 @@ function messageToDetails(email: Message) {
     throw 'Email has no "Subject" header';
   }
 
-  const date = moment(parseInt(email.internalDate));
-
   return {
-    sender:  fromHeader.value,
-    date:    date,
+    sender:  unescape(fromHeader.value),
+    date:    moment(parseInt(email.internalDate)),
     subject: subjectHeader.value,
     snippet: email.snippet
   }
