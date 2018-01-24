@@ -25,6 +25,7 @@
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "base64-js": "^1.2.1",
+    "moment": "^2.20.1",
     "text-encoder-lite": "^1.0.1"
   },
   "devDependencies": {
