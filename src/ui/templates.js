@@ -32,7 +32,7 @@ const mailboxOption = (selectedMailbox, mailbox) => {
 
 const mailboxSelector = (mailboxes, selectedMailbox) => {
   const makeMailboxOption = _.partial(mailboxOption, selectedMailbox);
-  return `<select>${mailboxes.map(makeMailboxOption)}</select>`;
+  return `<select id="mailbox-picker">${mailboxes.map(makeMailboxOption)}</select>`;
 };
 
 export const sidebarTemplate = (store, selectedMailboxName) => {
