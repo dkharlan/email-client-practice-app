@@ -13,3 +13,5 @@ export const byTimeDescending = (a: MessageDetails, b: MessageDetails) => {
   const dateB = b.date || theFuture;
   return dateB.diff(dateA);
 };
+
+export const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
