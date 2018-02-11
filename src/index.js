@@ -13,5 +13,5 @@ function render(selector, template) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  render('.email-list-container', t.sidebarTemplate(store.messages));
+  render('.email-list-container', t.sidebarTemplate(store, 'INBOX'));
 });

@@ -1,7 +1,6 @@
 import moment from 'moment'; // TODO see below
 import type { MessageDetails, MessageEntry } from './types';
-import { messageToDetails } from './transform';
-import { byTimeDescending } from '../utility/misc';
+import { denormalizeMailbox } from './transform';
 
 // TODO how to resolve format here? importing moment doesn't
 export const detailsTemplate = (details: MessageDetails) => {
@@ -20,11 +19,12 @@ export const detailsTemplate = (details: MessageDetails) => {
   `;
 };
 
-export const sidebarTemplate = (emailEntries: MessageEntry) => {
-  const emails = Object.values(emailEntries).map(messageToDetails).sort(byTimeDescending);
+export const sidebarTemplate = (store, mailboxName) => {
+  const {threads} = denormalizeMailbox(store, mailboxName);
+  const emails = threads.map(messages => messages[0]);
   const emailsTemplateFragment = emails.reduce((accum, e) => accum + '\n' + detailsTemplate(e), '');
   return `
-      <h2 class="email-header">Inbox</h2>
+      <h2 class="email-header">${mailboxName}</h2>
       <ul class="email-list">
         ${emailsTemplateFragment}
       </ul>

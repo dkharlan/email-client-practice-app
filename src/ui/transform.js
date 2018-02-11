@@ -24,21 +24,17 @@ export const messageToDetails = (email: Message): MessageDetails => {
   }
 };
 
-export const denormalizeThread = ({threads, messages}: Data, threadId: ThreadKey): ThreadDetails => {
-  const messageIds = threads[threadId];
-  const messagesDetails = messageIds.map((messageId) => messageToDetails(messages[messageId]))
-                                    .sort(byTimeDescending);
-  return {
-    id: threadId,
-    messages: messagesDetails
-  }
+const denormalizeThread = ({threads, messages}: Data, threadId: ThreadKey): Array<MessageDetails> => {
+  return threads[threadId].messages
+    .map(message => messages[message.id])
+    .map(messageToDetails)
+    .sort(byTimeDescending);
 };
 
 export const denormalizeMailbox = (store: Data, mailboxName: Label): MailboxDetails => {
   const {mailboxes} = store;
-  const threadDenormalizer = _.partial(denormalizeThread, store);
-  const threadIds = mailboxes[mailboxName];
-  const threads = threadIds.map((threadId) => threads[threadId].map(threadDenormalizer));
+  const threadIds = mailboxes[mailboxName].threadIds;
+  const threads = threadIds.map(_.partial(denormalizeThread, store));
   return {
     name: mailboxName,
     threads: threads
