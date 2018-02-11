@@ -1,7 +1,9 @@
 import moment from 'moment';
+import _ from 'lodash';
+
 import type { Message, Data, ThreadKey, Label } from '../store/types';
 import type { MailboxDetails, MessageDetails, ThreadDetails } from "./types";
-import { unescape } from '../utility/misc';
+import { unescape, byTimeDescending } from '../utility/misc';
 
 // TODO don't mix validation and data munging
 export const messageToDetails = (email: Message): MessageDetails => {
@@ -22,11 +24,23 @@ export const messageToDetails = (email: Message): MessageDetails => {
   }
 };
 
-export const denormalizeThread = ({messages, threads}: Data, threadId: ThreadKey): ThreadDetails => {
-  // TODO implement me
+export const denormalizeThread = ({threads, messages}: Data, threadId: ThreadKey): ThreadDetails => {
+  const messageIds = threads[threadId];
+  const messagesDetails = messageIds.map((messageId) => messageToDetails(messages[messageId]))
+                                    .sort(byTimeDescending);
+  return {
+    id: threadId,
+    messages: messagesDetails
+  }
 };
 
-// TODO only need the most recent message of a thread, and only the snippet
-export const denormalizeMailbox = ({mailboxes, messages, threads}: Data, mailboxName: Label): MailboxDetails => {
-  // TODO implement me
+export const denormalizeMailbox = (store: Data, mailboxName: Label): MailboxDetails => {
+  const {mailboxes} = store;
+  const threadDenormalizer = _.partial(denormalizeThread, store);
+  const threadIds = mailboxes[mailboxName];
+  const threads = threadIds.map((threadId) => threads[threadId].map(threadDenormalizer));
+  return {
+    name: mailboxName,
+    threads: threads
+  }
 };
