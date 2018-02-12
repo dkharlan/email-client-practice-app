@@ -22,8 +22,7 @@ const mountEmailListContainer = mailboxName => {
 };
 
 // see https://github.com/facebook/flow/issues/2099
-const selectMailbox = event => {
-  const {target} = event;
+const selectMailbox = ({target}) => {
   if(!(target instanceof window.HTMLInputElement)) {
     throw 'selectMailbox event target is not an HTMLInputElement';
   }
