@@ -1,13 +1,14 @@
 import _ from 'lodash';
-import moment from 'moment'; // TODO see below
+import type Moment from 'moment';
 
 import type { MessageDetails } from './types';
 import { denormalizeMailbox } from './transform';
 import { capitalize } from '../utility/misc';
 
-// TODO how to resolve format here? importing moment doesn't
+// TODO how to resolve format here?
 const detailsTemplate = (details: MessageDetails) => {
-  const formattedDate = details.date.format('h:mm A M/D/YY');
+  const date: Moment = details.date;
+  const formattedDate = date.format('h:mm A M/D/YY');
   return `
     <li>
       <button data-message-id="${details.id}" class="email-item" type="button">
