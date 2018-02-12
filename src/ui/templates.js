@@ -1,3 +1,7 @@
+/**
+ * @flow
+ */
+
 import _ from 'lodash';
 import type Moment from 'moment';
 
