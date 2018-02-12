@@ -23,8 +23,8 @@ const mountEmailListContainer = mailboxName => {
 
 // see https://github.com/facebook/flow/issues/2099
 const selectMailbox = ({target}) => {
-  if(!(target instanceof window.HTMLInputElement)) {
-    throw 'selectMailbox event target is not an HTMLInputElement';
+  if(!(target instanceof window.HTMLSelectElement)) {   // TODO this keeps flow happy, but feels fragile. thoughts?
+    throw 'selectMailbox event target is not an HTMLSelectElement';
   }
   const mailboxIndex = target.selectedIndex;
   const mailboxName = target.options[mailboxIndex].value;
