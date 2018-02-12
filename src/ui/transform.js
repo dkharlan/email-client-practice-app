@@ -1,3 +1,7 @@
+/**
+ * @flow
+ */
+
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -33,9 +37,13 @@ const denormalizeThread = ({threads, messages}: Data, threadId: ThreadKey): Arra
 
 export const denormalizeMailbox = (store: Data, mailboxName: Label): MailboxDetails => {
   const {mailboxes} = store;
-  const threadIds = mailboxes[mailboxName].threadIds;
+  const mailbox = mailboxes[mailboxName];
+  if(!mailbox) {
+    throw 'No mailbox named' + mailboxName;
+  }
+  const threads = mailbox.threadIds.map(_.partial(denormalizeThread, store))
   return {
     name: mailboxName,
-    threads: threadIds.map(_.partial(denormalizeThread, store))
+    threads: threads
   }
 };

@@ -1,5 +1,10 @@
+/**
+ * @flow
+ */
+
 import moment from 'moment';
-import type { Message, MessageKey, Label } from '../store/types';
+
+import type { Label } from '../store/types';
 
 // TODO merge these with store/types?
 

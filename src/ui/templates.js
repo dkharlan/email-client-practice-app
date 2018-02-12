@@ -5,6 +5,7 @@
 import _ from 'lodash';
 import type Moment from 'moment';
 
+import type { Data, Label } from '../store/types';
 import type { MessageDetails } from './types';
 import { denormalizeMailbox } from './transform';
 import { capitalize } from '../utility/misc';
@@ -27,7 +28,7 @@ const detailsTemplate = (details: MessageDetails) => {
   `;
 };
 
-const mailboxOption = (selectedMailbox, mailbox) => {
+const mailboxOption = (selectedMailbox, mailbox): string => {
   return `
     <option value="${mailbox}" ${selectedMailbox === mailbox ? 'selected' : ''}>
       ${capitalize(mailbox)}
@@ -35,12 +36,13 @@ const mailboxOption = (selectedMailbox, mailbox) => {
   `;
 };
 
-const mailboxSelector = (mailboxes, selectedMailbox) => {
+const mailboxSelector = (mailboxes, selectedMailbox): string => {
   const makeMailboxOption = _.partial(mailboxOption, selectedMailbox);
-  return `<select id="mailbox-picker">${mailboxes.map(makeMailboxOption)}</select>`;
+  const mailboxOptions = mailboxes.map(makeMailboxOption);
+  return `<select id="mailbox-picker">${mailboxOptions.join('')}</select>`;
 };
 
-export const sidebarTemplate = (store, selectedMailboxName) => {
+export const sidebarTemplate = (store: Data, selectedMailboxName: Label): string => {
   const mailboxNames = Object.keys(store.mailboxes);
   const {threads} = denormalizeMailbox(store, selectedMailboxName);
   const emails = threads.map(messages => messages[0]);
