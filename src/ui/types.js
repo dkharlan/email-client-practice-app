@@ -12,8 +12,6 @@ export type MessageDetails = {
   snippet: string
 }
 
-export type MessageEntry = {[id: MessageKey]: Message};
-
 export type MailboxDetails = {
   name: Label,
   threads: Array<MessageDetails>

@@ -2,11 +2,11 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import type { Message, Data, ThreadKey, Label } from '../store/types';
-import type { MailboxDetails, MessageDetails, ThreadDetails } from "./types";
+import type { MailboxDetails, MessageDetails } from "./types";
 import { unescape, byTimeDescending } from '../utility/misc';
 
 // TODO don't mix validation and data munging
-export const messageToDetails = (email: Message): MessageDetails => {
+const messageToDetails = (email: Message): MessageDetails => {
   const headers = email.payload.headers;
   const fromHeader = headers.find((h) => h.name === 'From');
   const subjectHeader = headers.find((h) => h.name === 'Subject');
@@ -34,9 +34,8 @@ const denormalizeThread = ({threads, messages}: Data, threadId: ThreadKey): Arra
 export const denormalizeMailbox = (store: Data, mailboxName: Label): MailboxDetails => {
   const {mailboxes} = store;
   const threadIds = mailboxes[mailboxName].threadIds;
-  const threads = threadIds.map(_.partial(denormalizeThread, store));
   return {
     name: mailboxName,
-    threads: threads
+    threads: threadIds.map(_.partial(denormalizeThread, store))
   }
 };

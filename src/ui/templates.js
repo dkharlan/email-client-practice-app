@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment'; // TODO see below
 
-import type { MessageDetails, MessageEntry } from './types';
+import type { MessageDetails } from './types';
 import { denormalizeMailbox } from './transform';
 import { capitalize } from '../utility/misc';
 
