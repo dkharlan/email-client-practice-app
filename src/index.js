@@ -21,12 +21,14 @@ const mountEmailListContainer = mailboxName => {
   }
 };
 
-// TODO this thread has some suggestions for keeping flow happy
-// https://github.com/facebook/flow/issues/2099
+// see https://github.com/facebook/flow/issues/2099
 const selectMailbox = event => {
-  const mailboxPicker = event.target;
-  const mailboxIndex = mailboxPicker.selectedIndex;
-  const mailboxName = mailboxPicker.options[mailboxIndex].value;
+  const {target} = event;
+  if(!(target instanceof window.HTMLInputElement)) {
+    throw 'selectMailbox event target is not an HTMLInputElement';
+  }
+  const mailboxIndex = target.selectedIndex;
+  const mailboxName = target.options[mailboxIndex].value;
   mountEmailListContainer(mailboxName);
 };
 
