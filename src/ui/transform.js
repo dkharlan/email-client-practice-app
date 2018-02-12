@@ -41,7 +41,7 @@ export const denormalizeMailbox = (store: Data, mailboxName: Label): MailboxDeta
   if(!mailbox) {
     throw 'No mailbox named' + mailboxName;
   }
-  const threads = mailbox.threadIds.map(_.partial(denormalizeThread, store))
+  const threads = mailbox.threadIds.map(_.partial(denormalizeThread, store));
   return {
     name: mailboxName,
     threads: threads
