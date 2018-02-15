@@ -1,26 +1,49 @@
+/**
+ * @flow
+ */
+
 import moment from 'moment';
-import type { Message } from '../store/types';
-import { unescape } from '../utility/misc';
+import _ from 'lodash';
+
+import type { Message, Data, ThreadKey, Label } from '../store/types';
+import type { MailboxDetails, MessageDetails } from "./types";
+import { unescape, byTimeDescending } from '../utility/misc';
 
 // TODO don't mix validation and data munging
-export const messageToDetails = (email: Message) => {
+const messageToDetails = (email: Message): MessageDetails => {
   const headers = email.payload.headers;
-
   const fromHeader = headers.find((h) => h.name === 'From');
   const subjectHeader = headers.find((h) => h.name === 'Subject');
 
   if(!fromHeader) {
     throw 'Email has no "From" header';
   }
-  if(!subjectHeader) {
-    throw 'Email has no "Subject" header';
-  }
 
   return {
     id:      email.id,
     sender:  unescape(fromHeader.value),
     date:    moment(parseInt(email.internalDate)),
-    subject: subjectHeader.value,
+    subject: subjectHeader ? subjectHeader.value : '(No subject)',
     snippet: email.snippet
+  }
+};
+
+const denormalizeThread = ({threads, messages}: Data, threadId: ThreadKey): Array<MessageDetails> => {
+  return threads[threadId].messages
+    .map(message => messages[message.id])
+    .map(messageToDetails)
+    .sort(byTimeDescending);
+};
+
+export const denormalizeMailbox = (store: Data, mailboxName: Label): MailboxDetails => {
+  const {mailboxes} = store;
+  const mailbox = mailboxes[mailboxName];
+  if(!mailbox) {
+    throw 'No mailbox named' + mailboxName;
+  }
+  const threads = mailbox.threadIds.map(_.partial(denormalizeThread, store));
+  return {
+    name: mailboxName,
+    threads: threads
   }
 };

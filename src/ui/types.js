@@ -1,6 +1,14 @@
-import moment from 'moment';
-import type { Message, MessageKey } from '../store/types';
+/**
+ * @flow
+ */
 
+import moment from 'moment';
+
+import type { Label } from '../store/types';
+
+// TODO merge these with store/types?
+
+// TODO use more types from store/types
 export type MessageDetails = {
   id:      string,
   sender:  string,
@@ -9,4 +17,7 @@ export type MessageDetails = {
   snippet: string
 }
 
-export type MessageEntry = {[id: MessageKey]: Message};
+export type MailboxDetails = {
+  name: Label,
+  threads: Array<MessageDetails>
+};
